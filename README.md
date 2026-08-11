@@ -1,779 +1,1430 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Market Visit</title>
-<style>
-body{font-family:Arial;max-width:450px;margin:auto;padding:18px}
-input,textarea,button{width:100%;box-sizing:border-box;padding:11px;margin:7px 0;font-size:16px}
-button{background:#4285f4;color:#fff;border:0;border-radius:6px}
-button:disabled{background:#aaa}
-.secondary{background:#eee;color:#333}
-label{display:block;font-weight:bold;font-size:14px;margin-top:12px}
-.info{background:#f2f6ff;padding:12px;border-radius:7px}
-.gps{background:#f5f5f5;padding:10px;border-radius:6px;white-space:pre-line;font-size:13px}
-.status{margin-top:10px;font-weight:bold;white-space:pre-line}
-video,img{width:100%;border-radius:8px}
-video{background:#000;display:none}
-img{display:none;margin-top:8px}
-.dec{display:flex;gap:8px;background:#fff8e1;padding:10px}
-.dec input{width:auto}
-.note{font-size:12px;color:#666}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Visit Entry</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 450px;
+      margin: auto;
+      padding: 18px;
+      background: #ffffff;
+    }
+
+    h3 {
+      margin-top: 5px;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 11px;
+      margin: 7px 0;
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+    }
+
+    button {
+      background: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    button.secondary {
+      background: #eeeeee;
+      color: #333333;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .logo img {
+      max-width: 140px;
+      max-height: 90px;
+    }
+
+    .info-box {
+      background: #f2f6ff;
+      border-radius: 7px;
+      padding: 12px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .info-box div {
+      padding: 3px 0;
+    }
+
+    #cameraVideo {
+      width: 100%;
+      background: #000000;
+      border-radius: 8px;
+      display: none;
+    }
+
+    #photoPreview {
+      width: 100%;
+      border-radius: 8px;
+      display: none;
+      margin-top: 10px;
+      border: 1px solid #dddddd;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+
+    .gps-box {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    .declaration {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-top: 15px;
+      background: #fff8e1;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .declaration input {
+      width: auto;
+      margin-top: 4px;
+    }
+
+    #canvas {
+      display: none;
+    }
+
+    .small-note {
+      font-size: 12px;
+      color: #666666;
+      margin-top: 5px;
+    }
+  </style>
 </head>
 
 <body>
 
-<h3>Employee Login</h3>
+  <div class="logo">
+    <img
+      src="PASTE_LOGO_IMAGE_URL_HERE"
+      alt="Company Logo"
+      onerror="this.style.display='none'">
+  </div>
 
-<div id="login">
-<label>Employee ID</label>
-<input id="emp" placeholder="EMP001">
-<button onclick="login()">Login</button>
-<div id="ls" class="status"></div>
-</div>
 
-<div id="form" style="display:none">
+  <!-- LOGIN -->
 
-<h3>Market Visit Entry</h3>
+  <div id="loginSection">
 
-<div class="info">
-Employee: <b id="name"></b> (<span id="eid"></span>)<br>
-Head Quarter: <span id="hq"></span><br>
-Email: <span id="email"></span>
-</div>
+    <h3>Employee Login</h3>
 
-<label>To Visit City / District / State</label>
-<input id="city" placeholder="Noida, UP">
+    <label>Employee ID</label>
 
-<label>Visit Customer Firm Name</label>
-<input id="firm" placeholder="Firm name">
+    <input
+      type="text"
+      id="loginEmployee"
+      placeholder="EMP001"
+      autocomplete="off">
 
-<label>Visit Customer Name</label>
-<input id="customer" placeholder="Customer name">
+    <button
+      type="button"
+      onclick="login()">
+      Login
+    </button>
 
-<label>Visit Area Pin Code</label>
-<input id="pin" inputmode="numeric" maxlength="6" placeholder="201301">
+    <div
+      id="loginStatus"
+      class="status">
+    </div>
 
-<label>Visited Customer Photo - Live Camera Only</label>
+  </div>
 
-<video id="video" autoplay playsinline></video>
 
-<button id="start" onclick="startCamera()">
-📷 Start Live Camera
-</button>
+  <!-- FORM -->
 
-<button id="capture" onclick="capture()" style="display:none">
-📸 Capture Live Photo
-</button>
+  <div
+    id="formSection"
+    style="display:none;">
 
-<button id="stop" class="secondary" onclick="stopCamera()" style="display:none">
-Stop Camera
-</button>
+    <h3>Market Visit Entry</h3>
 
-<canvas id="canvas" style="display:none"></canvas>
 
-<img id="photo">
+    <div class="info-box">
 
-<button id="retake" class="secondary" onclick="retake()" style="display:none">
-🔄 Retake Photo
-</button>
+      <div>
+        <strong>Employee:</strong>
+        <span id="infoName"></span>
+        (<span id="infoEmpId"></span>)
+      </div>
 
-<div id="gps" class="gps">
-📍 GPS: Waiting...
-</div>
+      <div>
+        <strong>Head Quarter:</strong>
+        <span id="infoHQ"></span>
+      </div>
 
-<div class="note">
-Photo केवल live camera frame से capture होगी। Gallery upload नहीं है।
-</div>
+      <div>
+        <strong>Email:</strong>
+        <span id="infoEmail"></span>
+      </div>
 
-<label>Visit Remarks / Discussion Notes</label>
+    </div>
 
-<textarea id="remarks" rows="3"></textarea>
 
-<div class="dec">
-<input type="checkbox" id="decl" onchange="check()">
-<span>
-I confirm that the above attendance and market visit details are true and correct.
-</span>
-</div>
+    <label>
+      To Visit City / District / State
+    </label>
 
-<button id="submit" onclick="submitVisit()" disabled>
-Submit Visit
-</button>
+    <input
+      type="text"
+      id="visitCity"
+      placeholder="e.g. Noida, UP">
 
-<div id="status" class="status"></div>
 
-<button class="secondary" onclick="logout()">
-Logout
-</button>
+    <label>
+      Visit Customer Firm Name
+    </label>
 
-</div>
+    <input
+      type="text"
+      id="firmName"
+      placeholder="Firm name">
+
+
+    <label>
+      Visit Customer Name
+    </label>
+
+    <input
+      type="text"
+      id="customerName"
+      placeholder="Customer name">
+
+
+    <label>
+      Visit Area Pin Code
+    </label>
+
+    <input
+      type="text"
+      id="pinCode"
+      placeholder="201301"
+      inputmode="numeric"
+      maxlength="6">
+
+
+    <label>
+      Visited Customer Photo - Live Camera Only
+    </label>
+
+    <video
+      id="cameraVideo"
+      autoplay
+      playsinline>
+    </video>
+
+
+    <button
+      id="startCameraBtn"
+      type="button"
+      onclick="startCamera()">
+      📷 Start Live Camera
+    </button>
+
+
+    <button
+      id="captureBtn"
+      type="button"
+      onclick="capturePhoto()"
+      style="display:none;">
+      📸 Capture Live Photo
+    </button>
+
+
+    <button
+      id="stopCameraBtn"
+      type="button"
+      class="secondary"
+      onclick="stopCamera()"
+      style="display:none;">
+      Stop Camera
+    </button>
+
+
+    <canvas id="canvas"></canvas>
+
+
+    <img
+      id="photoPreview"
+      alt="Captured Photo">
+
+
+    <button
+      id="retakeBtn"
+      type="button"
+      class="secondary"
+      onclick="retakePhoto()"
+      style="display:none;">
+      🔄 Retake Photo
+    </button>
+
+
+    <div
+      id="gpsStatus"
+      class="gps-box">
+      📍 GPS: Waiting...
+    </div>
+
+
+    <div class="small-note">
+      Photo केवल live camera frame से capture होगी।
+      Gallery upload का विकल्प नहीं है।
+    </div>
+
+
+    <label>
+      Visit Remarks / Discussion Notes
+    </label>
+
+    <textarea
+      id="remarks"
+      rows="3"
+      placeholder="Order discuss hua, samples diye..."></textarea>
+
+
+    <div class="declaration">
+
+      <input
+        type="checkbox"
+        id="declaration"
+        onchange="checkSubmit()">
+
+      <span>
+        I confirm that the above attendance and
+        market visit details are true and correct.
+      </span>
+
+    </div>
+
+
+    <button
+      id="submitBtn"
+      type="button"
+      onclick="submitVisit()"
+      disabled>
+      Submit Visit
+    </button>
+
+
+    <div
+      id="status"
+      class="status">
+    </div>
+
+
+    <button
+      type="button"
+      class="secondary"
+      onclick="logout()">
+      Logout
+    </button>
+
+  </div>
+
 
 <script>
 
-const API_URL =
-'https://script.google.com/macros/s/AKfycbyALO95cTRsYWt4yA5P1bijCghETY8G1MsxRyZpMpsmP6ChkRqqPsqoEo3oAUJZ2H7tUA/exec';
+  /* =====================================================
+     IMPORTANT
+     =====================================================
 
-let employee = {};
-let stream = null;
-let photoBase64 = null;
-let lat = null;
-let lng = null;
-let acc = null;
-let address = '';
+     Put your deployed Google Apps Script Web App URL here.
 
-async function getData(params){
+     Example:
+     https://script.google.com/macros/s/XXXXXXXX/exec
+  */
 
-let response =
-await fetch(
-API_URL + '?' +
-new URLSearchParams(params)
-);
+  const API_URL =
+    'https://script.google.com/macros/s/AKfycbyALO95cTRsYWt4yA5P1bijCghETY8G1MsxRyZpMpsmP6ChkRqqPsqoEo3oAUJZ2H7tUA/exec';
 
-if(!response.ok)
-throw new Error('Server error: ' + response.status);
 
-return response.json();
+  /* =====================================================
+     GLOBAL VARIABLES
+     ===================================================== */
 
-}
+  let employee = {};
 
-async function login(){
+  let cameraStream = null;
 
-let id =
-document.getElementById('emp').value.trim();
+  let photoBase64 = null;
 
-let status =
-document.getElementById('ls');
+  let latitude = null;
 
-if(!id){
+  let longitude = null;
 
-status.textContent =
-'Employee ID bharein.';
+  let accuracy = null;
 
-return;
+  let address = '';
 
-}
 
-status.textContent =
-'Checking...';
+  /* =====================================================
+     API HELPER
+     ===================================================== */
 
-try{
+  async function apiGet(params) {
 
-let result =
-await getData({
-action:'verifyEmployee',
-empId:id
-});
+    const url =
+      API_URL +
+      '?' +
+      new URLSearchParams(params).toString();
 
-if(!result.success){
+    const response =
+      await fetch(url);
 
-status.textContent =
-'❌ Employee ID nahi mila.';
+    if (!response.ok) {
+      throw new Error(
+        'Server error: ' +
+        response.status
+      );
+    }
 
-return;
+    return await response.json();
+  }
 
-}
 
-employee = result;
+  /* =====================================================
+     LOGIN
+     ===================================================== */
 
-document.getElementById('login').style.display='none';
-document.getElementById('form').style.display='block';
+  async function login() {
 
-document.getElementById('name').textContent =
-result.name || '';
+    const empId =
+      document
+        .getElementById('loginEmployee')
+        .value
+        .trim();
 
-document.getElementById('eid').textContent =
-result.empId || '';
+    const status =
+      document
+        .getElementById('loginStatus');
 
-document.getElementById('hq').textContent =
-result.hq || '';
 
-document.getElementById('email').textContent =
-result.email || '';
+    if (!empId) {
 
-}catch(error){
+      status.innerText =
+        'Employee ID bharein.';
 
-status.textContent =
-'❌ ' + error.message;
+      return;
+    }
 
-}
 
-}
+    if (
+      !API_URL ||
+      API_URL.indexOf('PASTE_') === 0
+    ) {
 
-async function startCamera(){
+      status.innerText =
+        '❌ Apps Script Web App URL set karein.';
 
-if(
-!navigator.mediaDevices ||
-!navigator.mediaDevices.getUserMedia
-){
+      return;
+    }
 
-document.getElementById('gps').textContent =
-'❌ Camera unavailable.\nHTTPS Chrome page use karein.';
 
-return;
+    status.innerText =
+      'Checking...';
 
-}
 
-try{
+    try {
 
-stream =
-await navigator.mediaDevices.getUserMedia({
+      const result =
+        await apiGet({
+          action: 'verifyEmployee',
+          empId: empId
+        });
 
-video:{
-facingMode:{ideal:'environment'},
-width:{ideal:1280},
-height:{ideal:720}
-},
 
-audio:false
+      if (!result.success) {
 
-});
+        status.innerText =
+          '❌ Employee ID nahi mila.';
 
-let video =
-document.getElementById('video');
+        return;
+      }
 
-video.srcObject =
-stream;
 
-video.style.display =
-'block';
+      employee = result;
 
-document.getElementById('start').style.display =
-'none';
 
-document.getElementById('capture').style.display =
-'block';
+      document
+        .getElementById('loginSection')
+        .style.display =
+        'none';
 
-document.getElementById('stop').style.display =
-'block';
 
-document.getElementById('gps').textContent =
-'📍 Camera ready.\nGPS प्राप्त हो रहा है...';
+      document
+        .getElementById('formSection')
+        .style.display =
+        'block';
 
-getGPS();
 
-}catch(error){
+      document
+        .getElementById('infoName')
+        .innerText =
+        result.name;
 
-document.getElementById('gps').textContent =
-'❌ Camera access error: ' +
-error.message +
-'\n\nChrome में Camera = Allow करें.';
 
-}
+      document
+        .getElementById('infoEmpId')
+        .innerText =
+        result.empId;
 
-}
 
-function getGPS(){
+      document
+        .getElementById('infoHQ')
+        .innerText =
+        result.hq;
 
-if(!navigator.geolocation){
 
-document.getElementById('gps').textContent =
-'❌ GPS unavailable';
+      document
+        .getElementById('infoEmail')
+        .innerText =
+        result.email || '';
 
-return;
 
-}
+    } catch (error) {
 
-navigator.geolocation.getCurrentPosition(
+      status.innerText =
+        '❌ Error: ' +
+        error.message;
 
-function(position){
+    }
 
-lat =
-position.coords.latitude;
+  }
 
-lng =
-position.coords.longitude;
 
-acc =
-position.coords.accuracy;
+  /* =====================================================
+     CAMERA
+     ===================================================== */
 
-document.getElementById('gps').textContent =
-'📍 GPS Ready\n' +
-'Lat: ' + lat.toFixed(6) + '\n' +
-'Lng: ' + lng.toFixed(6) + '\n' +
-'Accuracy: ' + Math.round(acc) + ' meters';
+  async function startCamera() {
 
-getAddress();
+    const video =
+      document
+        .getElementById('cameraVideo');
 
-},
+    const gpsStatus =
+      document
+        .getElementById('gpsStatus');
 
-function(error){
 
-document.getElementById('gps').textContent =
-'❌ GPS error: ' +
-error.message;
+    if (
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia
+    ) {
 
-},
+      gpsStatus.innerText =
+        '❌ Camera API available nahi hai.\n' +
+        'Page ko HTTPS Chrome me directly open karein.';
 
-{
+      return;
+    }
 
-enableHighAccuracy:true,
-maximumAge:0,
-timeout:15000
 
-}
+    try {
 
-);
+      cameraStream =
+        await navigator
+          .mediaDevices
+          .getUserMedia({
 
-}
+            video: {
 
-async function getAddress(){
+              facingMode: {
+                ideal: 'environment'
+              },
 
-if(lat===null || lng===null)
-return;
+              width: {
+                ideal: 1280
+              },
 
-try{
+              height: {
+                ideal: 720
+              }
 
-let response =
-await fetch(
-'https://nominatim.openstreetmap.org/reverse?format=json&lat=' +
-lat +
-'&lon=' +
-lng
-);
+            },
 
-let data =
-await response.json();
+            audio: false
 
-address =
-data.display_name || '';
+          });
 
-}catch(error){
 
-address='';
+      video.srcObject =
+        cameraStream;
 
-}
 
-}
+      video.style.display =
+        'block';
 
-function capture(){
 
-if(!stream){
+      document
+        .getElementById('startCameraBtn')
+        .style.display =
+        'none';
 
-alert('Pehle camera start karein.');
 
-return;
+      document
+        .getElementById('captureBtn')
+        .style.display =
+        'block';
 
-}
 
-if(lat===null || lng===null){
+      document
+        .getElementById('stopCameraBtn')
+        .style.display =
+        'block';
 
-alert(
-'GPS location milne tak wait karein.'
-);
 
-return;
+      gpsStatus.innerText =
+        '📍 Camera ready.\nGPS प्राप्त हो रहा है...';
 
-}
 
-if(acc>100){
+      getGPS();
 
-alert(
-'GPS accuracy ' +
-Math.round(acc) +
-' m hai.\n100 m se kam hone par capture karein.'
-);
 
-return;
+    } catch (error) {
 
-}
+      gpsStatus.innerText =
+        '❌ Camera access error: ' +
+        error.message +
+        '\n\nChrome में इस page को सीधे खोलें और Camera = Allow करें.';
 
-let video =
-document.getElementById('video');
+    }
 
-let canvas =
-document.getElementById('canvas');
+  }
 
-canvas.width =
-video.videoWidth;
 
-canvas.height =
-video.videoHeight;
+  /* =====================================================
+     GPS
+     ===================================================== */
 
-if(!canvas.width){
+  function getGPS() {
 
-alert(
-'Camera frame ready nahi hai.'
-);
+    if (!navigator.geolocation) {
 
-return;
+      document
+        .getElementById('gpsStatus')
+        .innerText =
+        '❌ GPS available nahi hai.';
 
-}
+      return;
+    }
 
-let ctx =
-canvas.getContext('2d');
 
-ctx.drawImage(
-video,
-0,
-0,
-canvas.width,
-canvas.height
-);
+    navigator
+      .geolocation
+      .getCurrentPosition(
 
-let fontSize =
-Math.max(
-18,
-Math.floor(canvas.width/45)
-);
+        function(position) {
 
-let barHeight =
-fontSize * 4;
+          latitude =
+            position.coords.latitude;
 
-ctx.fillStyle =
-'rgba(0,0,0,.65)';
+          longitude =
+            position.coords.longitude;
 
-ctx.fillRect(
-0,
-canvas.height-barHeight,
-canvas.width,
-barHeight
-);
+          accuracy =
+            position.coords.accuracy;
 
-ctx.fillStyle =
-'#fff';
 
-ctx.font =
-fontSize + 'px Arial';
+          document
+            .getElementById('gpsStatus')
+            .innerText =
 
-ctx.fillText(
-employee.name +
-' | ' +
-new Date().toLocaleString('en-IN'),
+            '📍 GPS Ready\n' +
+            'Lat: ' +
+            latitude.toFixed(6) +
+            '\nLng: ' +
+            longitude.toFixed(6) +
+            '\nAccuracy: ' +
+            Math.round(accuracy) +
+            ' meters';
 
-12,
-canvas.height-barHeight+fontSize
-);
 
-ctx.fillText(
-'Lat: ' +
-lat.toFixed(6) +
-' | Lng: ' +
-lng.toFixed(6),
+          getAddress();
 
-12,
-canvas.height-barHeight+fontSize*2
-);
+        },
 
-ctx.fillText(
-'GPS Accuracy: ' +
-Math.round(acc) +
-' m',
 
-12,
-canvas.height-barHeight+fontSize*3
-);
+        function(error) {
 
-photoBase64 =
-canvas.toDataURL(
-'image/jpeg',
-0.85
-);
+          document
+            .getElementById('gpsStatus')
+            .innerText =
+            '❌ GPS error: ' +
+            error.message;
 
-document.getElementById('photo').src =
-photoBase64;
+        },
 
-document.getElementById('photo').style.display =
-'block';
 
-document.getElementById('retake').style.display =
-'block';
+        {
 
-stopCamera();
+          enableHighAccuracy: true,
 
-check();
+          maximumAge: 0,
 
-}
+          timeout: 15000
 
-function stopCamera(){
+        }
 
-if(stream){
+      );
 
-stream
-.getTracks()
-.forEach(function(track){
+  }
 
-track.stop();
 
-});
+  /* =====================================================
+     ADDRESS
+     ===================================================== */
 
-stream=null;
+  async function getAddress() {
 
-}
+    if (
+      latitude === null ||
+      longitude === null
+    ) {
+      return;
+    }
 
-document.getElementById('video').style.display =
-'none';
 
-document.getElementById('capture').style.display =
-'none';
+    const url =
+      'https://nominatim.openstreetmap.org/reverse' +
+      '?format=json' +
+      '&lat=' +
+      latitude +
+      '&lon=' +
+      longitude;
 
-document.getElementById('stop').style.display =
-'none';
 
-if(!photoBase64){
+    try {
 
-document.getElementById('start').style.display =
-'block';
+      const response =
+        await fetch(url);
 
-}
+      const data =
+        await response.json();
 
-}
+      address =
+        data.display_name || '';
 
-function retake(){
+    } catch (error) {
 
-photoBase64=null;
+      address = '';
 
-document.getElementById('photo').style.display =
-'none';
+    }
 
-document.getElementById('retake').style.display =
-'none';
+  }
 
-document.getElementById('start').style.display =
-'block';
 
-check();
+  /* =====================================================
+     CAPTURE
+     ===================================================== */
 
-startCamera();
+  function capturePhoto() {
 
-}
+    if (!cameraStream) {
 
-function check(){
+      alert(
+        'Pehle camera start karein.'
+      );
 
-let declaration =
-document.getElementById('decl').checked;
+      return;
+    }
 
-document.getElementById('submit').disabled =
-!(
-photoBase64 &&
-lat!==null &&
-lng!==null &&
-declaration
-);
 
-}
+    if (
+      latitude === null ||
+      longitude === null
+    ) {
 
-async function submitVisit(){
+      alert(
+        'GPS location milne tak wait karein.'
+      );
 
-let status =
-document.getElementById('status');
+      return;
+    }
 
-let button =
-document.getElementById('submit');
 
-let city =
-document.getElementById('city').value.trim();
+    if (
+      accuracy !== null &&
+      accuracy > 100
+    ) {
 
-let firm =
-document.getElementById('firm').value.trim();
+      alert(
+        'GPS accuracy abhi ' +
+        Math.round(accuracy) +
+        ' meters hai.\n\n' +
+        'Open area me jaakar dobara try karein.'
+      );
 
-let customer =
-document.getElementById('customer').value.trim();
+      return;
+    }
 
-let pin =
-document.getElementById('pin').value.trim();
 
-let remarks =
-document.getElementById('remarks').value.trim();
+    const video =
+      document
+        .getElementById('cameraVideo');
 
-if(
-!city ||
-!firm ||
-!customer ||
-!/^\d{6}$/.test(pin)
-){
 
-status.textContent =
-'❌ सभी required fields सही भरें.';
+    const canvas =
+      document
+        .getElementById('canvas');
 
-return;
 
-}
+    if (
+      !video.videoWidth ||
+      !video.videoHeight
+    ) {
 
-if(!photoBase64 || lat===null){
+      alert(
+        'Camera frame ready nahi hai.'
+      );
 
-status.textContent =
-'❌ Live photo और GPS required.';
+      return;
+    }
 
-return;
 
-}
+    canvas.width =
+      video.videoWidth;
 
-if(acc>100){
+    canvas.height =
+      video.videoHeight;
 
-status.textContent =
-'❌ GPS accuracy 100 m से ज्यादा है.';
 
-return;
+    const ctx =
+      canvas.getContext('2d');
 
-}
 
-button.disabled=true;
+    /* LIVE VIDEO FRAME */
 
-status.textContent =
-'Saving...';
+    ctx.drawImage(
+      video,
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
 
-try{
 
-let response =
-await fetch(
-API_URL,
-{
+    /* =================================================
+       WATERMARK
+       ================================================= */
 
-method:'POST',
+    const now =
+      new Date();
 
-headers:{
-'Content-Type':
-'text/plain;charset=utf-8'
-},
 
-body:JSON.stringify({
+    const dateTime =
+      now.toLocaleString('en-IN');
 
-action:'saveVisit',
 
-empId:employee.empId,
+    const line1 =
+      employee.name +
+      ' | ' +
+      dateTime;
 
-empName:employee.name,
 
-hq:employee.hq,
+    const line2 =
+      'Lat: ' +
+      latitude.toFixed(6) +
+      ' | Lng: ' +
+      longitude.toFixed(6);
 
-visitCity:city,
 
-firmName:firm,
+    const line3 =
+      'GPS Accuracy: ' +
+      Math.round(accuracy) +
+      ' m';
 
-pinCode:pin,
 
-contactPerson:customer,
+    const fontSize =
+      Math.max(
+        18,
+        Math.floor(
+          canvas.width / 45
+        )
+      );
 
-lat:lat,
 
-lng:lng,
+    const barHeight =
+      fontSize * 4;
 
-accuracy:acc,
 
-geoLocation:
-lat.toFixed(6) +
-',' +
-lng.toFixed(6),
+    ctx.fillStyle =
+      'rgba(0,0,0,0.65)';
 
-address:address,
 
-remarks:remarks,
+    ctx.fillRect(
+      0,
+      canvas.height - barHeight,
+      canvas.width,
+      barHeight
+    );
 
-photoBase64:
-photoBase64
 
-})
+    ctx.fillStyle =
+      '#ffffff';
 
-}
 
-);
+    ctx.font =
+      fontSize +
+      'px Arial';
 
-let result =
-await response.json();
 
-if(
-result.status ===
-'duplicate'
-){
+    ctx.fillText(
+      line1,
+      12,
+      canvas.height -
+        barHeight +
+        fontSize
+    );
 
-status.textContent =
-'⚠️ Is customer ki entry aaj pehle se ho chuki hai.';
 
-button.disabled=false;
+    ctx.fillText(
+      line2,
+      12,
+      canvas.height -
+        barHeight +
+        fontSize * 2
+    );
 
-return;
 
-}
+    ctx.fillText(
+      line3,
+      12,
+      canvas.height -
+        barHeight +
+        fontSize * 3
+    );
 
-if(
-result.status !==
-'success'
-){
 
-throw new Error(
-result.message ||
-'Save failed'
-);
+    /* JPEG */
 
-}
+    photoBase64 =
+      canvas.toDataURL(
+        'image/jpeg',
+        0.85
+      );
 
-status.textContent =
-'✅ Visit entry saved successfully.';
 
-clearForm();
+    document
+      .getElementById('photoPreview')
+      .src =
+      photoBase64;
 
-}catch(error){
 
-status.textContent =
-'❌ ' +
-error.message;
+    document
+      .getElementById('photoPreview')
+      .style.display =
+      'block';
 
-button.disabled=false;
 
-}
+    document
+      .getElementById('retakeBtn')
+      .style.display =
+      'block';
 
-}
 
-function clearForm(){
+    stopCamera();
 
-document.getElementById('city').value='';
-document.getElementById('firm').value='';
-document.getElementById('customer').value='';
-document.getElementById('pin').value='';
-document.getElementById('remarks').value='';
 
-document.getElementById('decl').checked=false;
+    checkSubmit();
 
-photoBase64=null;
-lat=null;
-lng=null;
-acc=null;
-address='';
+  }
 
-document.getElementById('photo').style.display =
-'none';
 
-document.getElementById('retake').style.display =
-'none';
+  /* =====================================================
+     STOP CAMERA
+     ===================================================== */
 
-document.getElementById('start').style.display =
-'block';
+  function stopCamera() {
 
-document.getElementById('gps').textContent =
-'📍 GPS: Waiting...';
+    if (cameraStream) {
 
-check();
+      cameraStream
+        .getTracks()
+        .forEach(function(track) {
 
-}
+          track.stop();
 
-function logout(){
+        });
 
-stopCamera();
 
-employee={};
+      cameraStream = null;
 
-photoBase64=null;
-lat=null;
-lng=null;
-acc=null;
-address='';
+    }
 
-document.getElementById('form').style.display =
-'none';
 
-document.getElementById('login').style.display =
-'block';
+    document
+      .getElementById('cameraVideo')
+      .style.display =
+      'none';
 
-document.getElementById('emp').value='';
 
-document.getElementById('ls').textContent='';
+    document
+      .getElementById('captureBtn')
+      .style.display =
+      'none';
 
-}
+
+    document
+      .getElementById('stopCameraBtn')
+      .style.display =
+      'none';
+
+
+    if (!photoBase64) {
+
+      document
+        .getElementById('startCameraBtn')
+        .style.display =
+        'block';
+
+    }
+
+  }
+
+
+  /* =====================================================
+     RETAKE
+     ===================================================== */
+
+  function retakePhoto() {
+
+    photoBase64 = null;
+
+
+    document
+      .getElementById('photoPreview')
+      .style.display =
+      'none';
+
+
+    document
+      .getElementById('retakeBtn')
+      .style.display =
+      'none';
+
+
+    document
+      .getElementById('startCameraBtn')
+      .style.display =
+      'block';
+
+
+    checkSubmit();
+
+
+    startCamera();
+
+  }
+
+
+  /* =====================================================
+     SUBMIT ENABLE
+     ===================================================== */
+
+  function checkSubmit() {
+
+    const declaration =
+      document
+        .getElementById('declaration')
+        .checked;
+
+
+    document
+      .getElementById('submitBtn')
+      .disabled =
+
+      !(
+        photoBase64 &&
+        latitude !== null &&
+        longitude !== null &&
+        declaration
+      );
+
+  }
+
+
+  /* =====================================================
+     SUBMIT
+     ===================================================== */
+
+  async function submitVisit() {
+
+    const status =
+      document
+        .getElementById('status');
+
+
+    const btn =
+      document
+        .getElementById('submitBtn');
+
+
+    const visitCity =
+      document
+        .getElementById('visitCity')
+        .value
+        .trim();
+
+
+    const firmName =
+      document
+        .getElementById('firmName')
+        .value
+        .trim();
+
+
+    const customerName =
+      document
+        .getElementById('customerName')
+        .value
+        .trim();
+
+
+    const pinCode =
+      document
+        .getElementById('pinCode')
+        .value
+        .trim();
+
+
+    const remarks =
+      document
+        .getElementById('remarks')
+        .value
+        .trim();
+
+
+    if (
+      !visitCity ||
+      !firmName ||
+      !customerName ||
+      !pinCode
+    ) {
+
+      status.innerText =
+        '❌ Saari required fields bharein.';
+
+      return;
+    }
+
+
+    if (!photoBase64) {
+
+      status.innerText =
+        '❌ Live photo capture karein.';
+
+      return;
+    }
+
+
+    if (
+      latitude === null ||
+      longitude === null
+    ) {
+
+      status.innerText =
+        '❌ GPS required.';
+
+      return;
+    }
+
+
+    btn.disabled = true;
+
+    status.innerText =
+      'Saving...';
+
+
+    /*
+      IMPORTANT:
+      This version expects the Apps Script backend
+      to provide a POST endpoint.
+
+      The final backend will validate the employee,
+      GPS, duplicate visit and save the photo.
+    */
+
+    try {
+
+      const response =
+        await fetch(
+          API_URL,
+          {
+            method: 'POST',
+
+            headers: {
+              'Content-Type':
+                'text/plain;charset=utf-8'
+            },
+
+            body: JSON.stringify({
+
+              action: 'saveVisit',
+
+              empId:
+                employee.empId,
+
+              empName:
+                employee.name,
+
+              hq:
+                employee.hq,
+
+              visitCity:
+                visitCity,
+
+              firmName:
+                firmName,
+
+              pinCode:
+                pinCode,
+
+              contactPerson:
+                customerName,
+
+              lat:
+                latitude,
+
+              lng:
+                longitude,
+
+              accuracy:
+                accuracy,
+
+              geoLocation:
+                latitude.toFixed(6) +
+                ',' +
+                longitude.toFixed(6),
+
+              address:
+                address,
+
+              remarks:
+                remarks,
+
+              photoBase64:
+                photoBase64
+
+            })
+
+          }
+        );
+
+
+      const result =
+        await response.json();
+
+
+      if (
+        result.status ===
+        'duplicate'
+      ) {
+
+        status.innerText =
+          '⚠️ Is customer ki entry aaj pehle se ho chuki hai.';
+
+        btn.disabled = false;
+
+        return;
+      }
+
+
+      if (
+        result.status !==
+        'success'
+      ) {
+
+        throw new Error(
+          result.message ||
+          'Save failed'
+        );
+
+      }
+
+
+      status.innerText =
+        '✅ Visit entry saved successfully.';
+
+
+      clearForm();
+
+
+    } catch (error) {
+
+      status.innerText =
+        '❌ Error: ' +
+        error.message;
+
+      btn.disabled = false;
+
+    }
+
+  }
+
+
+  /* =====================================================
+     CLEAR FORM
+     ===================================================== */
+
+  function clearForm() {
+
+    document
+      .getElementById('visitCity')
+      .value = '';
+
+
+    document
+      .getElementById('firmName')
+      .value = '';
+
+
+    document
+      .getElementById('customerName')
+      .value = '';
+
+
+    document
+      .getElementById('pinCode')
+      .value = '';
+
+
+    document
+      .getElementById('remarks')
+      .value = '';
+
+
+    document
+      .getElementById('declaration')
+      .checked = false;
+
+
+    photoBase64 = null;
+
+    latitude = null;
+
+    longitude = null;
+
+    accuracy = null;
+
+    address = '';
+
+
+    document
+      .getElementById('photoPreview')
+      .style.display =
+      'none';
+
+
+    document
+      .getElementById('retakeBtn')
+      .style.display =
+      'none';
+
+
+    document
+      .getElementById('startCameraBtn')
+      .style.display =
+      'block';
+
+
+    document
+      .getElementById('gpsStatus')
+      .innerText =
+      '📍 GPS: Waiting...';
+
+
+    checkSubmit();
+
+  }
+
+
+  /* =====================================================
+     LOGOUT
+     ===================================================== */
+
+  function logout() {
+
+    stopCamera();
+
+
+    employee = {};
+
+    photoBase64 = null;
+
+    latitude = null;
+
+    longitude = null;
+
+    accuracy = null;
+
+    address = '';
+
+
+    document
+      .getElementById('formSection')
+      .style.display =
+      'none';
+
+
+    document
+      .getElementById('loginSection')
+      .style.display =
+      'block';
+
+
+    document
+      .getElementById('loginEmployee')
+      .value =
+      '';
+
+
+    document
+      .getElementById('loginStatus')
+      .innerText =
+      '';
+
+  }
 
 </script>
 
 </body>
-</html>
+</html>1
