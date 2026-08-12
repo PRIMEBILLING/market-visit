@@ -1,1430 +1,1080 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Market Visit Entry</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Market Visit</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 450px;
-      margin: auto;
-      padding: 18px;
-      background: #ffffff;
-    }
-
-    h3 {
-      margin-top: 5px;
-    }
-
-    input, textarea, button {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 11px;
-      margin: 7px 0;
-      font-size: 16px;
-      font-family: Arial, sans-serif;
-    }
-
-    button {
-      background: #4285f4;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
-
-    button.secondary {
-      background: #eeeeee;
-      color: #333333;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      font-size: 14px;
-      margin-top: 12px;
-    }
-
-    .logo {
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .logo img {
-      max-width: 140px;
-      max-height: 90px;
-    }
-
-    .info-box {
-      background: #f2f6ff;
-      border-radius: 7px;
-      padding: 12px;
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-
-    .info-box div {
-      padding: 3px 0;
-    }
-
-    #cameraVideo {
-      width: 100%;
-      background: #000000;
-      border-radius: 8px;
-      display: none;
-    }
-
-    #photoPreview {
-      width: 100%;
-      border-radius: 8px;
-      display: none;
-      margin-top: 10px;
-      border: 1px solid #dddddd;
-    }
-
-    .status {
-      margin-top: 10px;
-      font-weight: bold;
-      white-space: pre-line;
-    }
-
-    .gps-box {
-      background: #f5f5f5;
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 13px;
-      margin-top: 10px;
-      white-space: pre-line;
-    }
-
-    .declaration {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-      margin-top: 15px;
-      background: #fff8e1;
-      padding: 10px;
-      border-radius: 6px;
-    }
-
-    .declaration input {
-      width: auto;
-      margin-top: 4px;
-    }
-
-    #canvas {
-      display: none;
-    }
-
-    .small-note {
-      font-size: 12px;
-      color: #666666;
-      margin-top: 5px;
-    }
-  </style>
+<style>
+*{box-sizing:border-box}
+body{
+font-family:Arial,sans-serif;
+max-width:450px;
+margin:auto;
+padding:18px;
+background:#fff;
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
+body:before{
+content:"";
+position:fixed;
+inset:0;
+z-index:-1;
+background:rgba(255,255,255,.92);
+}
+h3{margin-top:5px}
+input,textarea,button{
+width:100%;
+padding:11px;
+margin:7px 0;
+font-size:16px;
+font-family:Arial,sans-serif;
+}
+button{
+background:#4285f4;
+color:#fff;
+border:0;
+border-radius:6px;
+cursor:pointer;
+}
+button:disabled{background:#aaa}
+button.secondary{background:#eee;color:#333}
+label{
+display:block;
+font-weight:bold;
+font-size:14px;
+margin-top:12px;
+}
+.logo{text-align:center;margin-bottom:12px}
+.logo img{max-width:160px;max-height:100px}
+.info-box{
+background:#f2f6ff;
+border-radius:7px;
+padding:12px;
+margin-bottom:15px;
+font-size:14px;
+}
+.info-box div{padding:3px 0}
+#cameraVideo{
+width:100%;
+background:#000;
+border-radius:8px;
+display:none;
+}
+#photoPreview{
+width:100%;
+border-radius:8px;
+display:none;
+margin-top:10px;
+border:1px solid #ddd;
+}
+.status{
+margin-top:10px;
+font-weight:bold;
+white-space:pre-line;
+}
+.gps-box{
+background:#f5f5f5;
+padding:10px;
+border-radius:6px;
+font-size:13px;
+margin-top:10px;
+white-space:pre-line;
+}
+.declaration{
+display:flex;
+gap:8px;
+align-items:flex-start;
+margin-top:15px;
+background:#fff8e1;
+padding:10px;
+border-radius:6px;
+}
+.declaration input{
+width:auto;
+margin-top:4px;
+}
+#canvas{display:none}
+.small-note{
+font-size:12px;
+color:#666;
+margin-top:5px;
+}
+.hidden{display:none!important}
+</style>
 </head>
 
 <body>
 
-  <div class="logo">
-    <img
-      src="PASTE_LOGO_IMAGE_URL_HERE"
-      alt="Company Logo"
-      onerror="this.style.display='none'">
-  </div>
+<div class="logo">
+<img id="companyLogo" src="" alt="Company Logo">
+</div>
 
+<div id="loginSection">
 
-  <!-- LOGIN -->
+<h3 id="loginTitle">Employee Login</h3>
 
-  <div id="loginSection">
+<label id="employeeIdLabel">Employee ID</label>
 
-    <h3>Employee Login</h3>
+<input
+type="text"
+id="loginEmployee"
+placeholder="EMP001"
+autocomplete="off">
 
-    <label>Employee ID</label>
+<button
+type="button"
+onclick="login()">
+Login
+</button>
 
-    <input
-      type="text"
-      id="loginEmployee"
-      placeholder="EMP001"
-      autocomplete="off">
+<div id="loginStatus" class="status"></div>
 
-    <button
-      type="button"
-      onclick="login()">
-      Login
-    </button>
+</div>
 
-    <div
-      id="loginStatus"
-      class="status">
-    </div>
+<div id="formSection" class="hidden">
 
-  </div>
+<h3 id="pageTitle">Market Visit Entry</h3>
 
+<div class="info-box">
 
-  <!-- FORM -->
+<div>
+<strong id="employeeNameHeading">Employee Name:</strong>
+<span id="infoName"></span>
+(<span id="infoEmpId"></span>)
+</div>
 
-  <div
-    id="formSection"
-    style="display:none;">
+<div id="hqRow">
+<strong id="hqHeading">Head Quarter:</strong>
+<span id="infoHQ"></span>
+</div>
 
-    <h3>Market Visit Entry</h3>
+<div id="emailRow">
+<strong>Email:</strong>
+<span id="infoEmail"></span>
+</div>
 
+</div>
 
-    <div class="info-box">
+<label id="visitCityLabel">To Visit City / District / State</label>
 
-      <div>
-        <strong>Employee:</strong>
-        <span id="infoName"></span>
-        (<span id="infoEmpId"></span>)
-      </div>
+<input
+type="text"
+id="visitCity"
+placeholder="e.g. Noida, UP">
 
-      <div>
-        <strong>Head Quarter:</strong>
-        <span id="infoHQ"></span>
-      </div>
+<label id="firmNameLabel">Visit Customer Firm Name</label>
 
-      <div>
-        <strong>Email:</strong>
-        <span id="infoEmail"></span>
-      </div>
+<input
+type="text"
+id="firmName"
+placeholder="Firm name">
 
-    </div>
+<label id="customerNameLabel">Visit Customer Name</label>
 
+<input
+type="text"
+id="customerName"
+placeholder="Customer name">
 
-    <label>
-      To Visit City / District / State
-    </label>
+<label id="pinCodeLabel">Visit Area Pin Code</label>
 
-    <input
-      type="text"
-      id="visitCity"
-      placeholder="e.g. Noida, UP">
+<input
+type="text"
+id="pinCode"
+placeholder="201301"
+inputmode="numeric"
+maxlength="6">
 
+<div id="cameraSection">
 
-    <label>
-      Visit Customer Firm Name
-    </label>
+<label id="photoLabel">
+Visited Customer Photo - Live Camera Only
+</label>
 
-    <input
-      type="text"
-      id="firmName"
-      placeholder="Firm name">
+<video id="cameraVideo" autoplay playsinline></video>
 
+<button
+id="startCameraBtn"
+type="button"
+onclick="startCamera()">
+📷 Start Live Camera
+</button>
 
-    <label>
-      Visit Customer Name
-    </label>
-
-    <input
-      type="text"
-      id="customerName"
-      placeholder="Customer name">
-
-
-    <label>
-      Visit Area Pin Code
-    </label>
-
-    <input
-      type="text"
-      id="pinCode"
-      placeholder="201301"
-      inputmode="numeric"
-      maxlength="6">
-
-
-    <label>
-      Visited Customer Photo - Live Camera Only
-    </label>
-
-    <video
-      id="cameraVideo"
-      autoplay
-      playsinline>
-    </video>
-
-
-    <button
-      id="startCameraBtn"
-      type="button"
-      onclick="startCamera()">
-      📷 Start Live Camera
-    </button>
-
-
-    <button
-      id="captureBtn"
-      type="button"
-      onclick="capturePhoto()"
-      style="display:none;">
-      📸 Capture Live Photo
-    </button>
-
-
-    <button
-      id="stopCameraBtn"
-      type="button"
-      class="secondary"
-      onclick="stopCamera()"
-      style="display:none;">
-      Stop Camera
-    </button>
-
-
-    <canvas id="canvas"></canvas>
-
-
-    <img
-      id="photoPreview"
-      alt="Captured Photo">
-
-
-    <button
-      id="retakeBtn"
-      type="button"
-      class="secondary"
-      onclick="retakePhoto()"
-      style="display:none;">
-      🔄 Retake Photo
-    </button>
-
-
-    <div
-      id="gpsStatus"
-      class="gps-box">
-      📍 GPS: Waiting...
-    </div>
-
-
-    <div class="small-note">
-      Photo केवल live camera frame से capture होगी।
-      Gallery upload का विकल्प नहीं है।
-    </div>
-
-
-    <label>
-      Visit Remarks / Discussion Notes
-    </label>
-
-    <textarea
-      id="remarks"
-      rows="3"
-      placeholder="Order discuss hua, samples diye..."></textarea>
-
-
-    <div class="declaration">
-
-      <input
-        type="checkbox"
-        id="declaration"
-        onchange="checkSubmit()">
-
-      <span>
-        I confirm that the above attendance and
-        market visit details are true and correct.
-      </span>
-
-    </div>
-
-
-    <button
-      id="submitBtn"
-      type="button"
-      onclick="submitVisit()"
-      disabled>
-      Submit Visit
-    </button>
-
-
-    <div
-      id="status"
-      class="status">
-    </div>
-
-
-    <button
-      type="button"
-      class="secondary"
-      onclick="logout()">
-      Logout
-    </button>
-
-  </div>
-
+<button
+id="captureBtn"
+type="button"
+onclick="capturePhoto()"
+style="display:none">
+📸 Capture Live Photo
+</button>
+
+<button
+id="stopCameraBtn"
+type="button"
+class="secondary"
+onclick="stopCamera()"
+style="display:none">
+Stop Camera
+</button>
+
+<canvas id="canvas"></canvas>
+
+<img id="photoPreview" alt="Captured Photo">
+
+<button
+id="retakeBtn"
+type="button"
+class="secondary"
+onclick="retakePhoto()"
+style="display:none">
+🔄 Retake Photo
+</button>
+
+</div>
+
+<div id="gpsStatus" class="gps-box">
+📍 GPS: Waiting...
+</div>
+
+<div class="small-note">
+Photo केवल live camera frame से capture होगी।
+Gallery upload का विकल्प नहीं है।
+</div>
+
+<div id="remarksSection">
+
+<label id="remarksLabel">
+Visit Remarks / Discussion Notes
+</label>
+
+<textarea
+id="remarks"
+rows="3"
+placeholder="Order discuss hua, samples diye...">
+</textarea>
+
+</div>
+
+<div id="declarationSection" class="declaration">
+
+<input
+type="checkbox"
+id="declaration"
+onchange="checkSubmit()">
+
+<span id="declarationLabel">
+I confirm that the above attendance and market visit details are true and correct.
+</span>
+
+</div>
+
+<button
+id="submitBtn"
+type="button"
+onclick="submitVisit()"
+disabled>
+Submit Visit
+</button>
+
+<div id="status" class="status"></div>
+
+<button
+type="button"
+class="secondary"
+onclick="logout()">
+Logout
+</button>
+
+</div>
 
 <script>
 
-  /* =====================================================
-     IMPORTANT
-     =====================================================
+const API_URL='https://script.google.com/macros/s/AKfycbyALO95cTRsYWt4yA5P1bijCghETY8G1MsxRyZpMpsmP6ChkRqqPsqoEo3oAUJZ2H7tUA/exec';
 
-     Put your deployed Google Apps Script Web App URL here.
+let employee={};
+let settings={};
+let cameraStream=null;
+let photoBase64=null;
+let latitude=null;
+let longitude=null;
+let accuracy=null;
+let address='';
 
-     Example:
-     https://script.google.com/macros/s/XXXXXXXX/exec
-  */
+function boolValue(v,def=true){
+if(v===undefined||v===null||v==='')return def;
+if(typeof v==='boolean')return v;
+return['true','yes','1','on'].includes(String(v).toLowerCase());
+}
 
-  const API_URL =
-    'https://script.google.com/macros/s/AKfycbyALO95cTRsYWt4yA5P1bijCghETY8G1MsxRyZpMpsmP6ChkRqqPsqoEo3oAUJZ2H7tUA/exec';
+async function apiGet(params){
 
+const url=API_URL+'?'+new URLSearchParams(params).toString();
 
-  /* =====================================================
-     GLOBAL VARIABLES
-     ===================================================== */
+const response=await fetch(url);
 
-  let employee = {};
+if(!response.ok)
+throw new Error('Server error: '+response.status);
 
-  let cameraStream = null;
+return await response.json();
+}
 
-  let photoBase64 = null;
+async function loadSettings(){
 
-  let latitude = null;
+try{
 
-  let longitude = null;
+const result=await apiGet({
+action:'getSettings'
+});
 
-  let accuracy = null;
+if(result.success){
 
-  let address = '';
+settings=result;
 
+applySettings();
 
-  /* =====================================================
-     API HELPER
-     ===================================================== */
+}else{
 
-  async function apiGet(params) {
+console.log('Settings load failed',result);
 
-    const url =
-      API_URL +
-      '?' +
-      new URLSearchParams(params).toString();
+}
 
-    const response =
-      await fetch(url);
+}catch(error){
 
-    if (!response.ok) {
-      throw new Error(
-        'Server error: ' +
-        response.status
-      );
-    }
+console.log('Settings error:',error);
 
-    return await response.json();
-  }
+}
 
+}
 
-  /* =====================================================
-     LOGIN
-     ===================================================== */
+function applySettings(){
 
-  async function login() {
+document.title=
+settings.pageTitle||
+settings.companyName||
+'Market Visit Entry';
 
-    const empId =
-      document
-        .getElementById('loginEmployee')
-        .value
-        .trim();
+document.getElementById('pageTitle').innerText=
+settings.pageTitle||
+settings.companyName||
+'Market Visit Entry';
 
-    const status =
-      document
-        .getElementById('loginStatus');
+document.getElementById('loginTitle').innerText=
+settings.loginTitle||
+'Employee Login';
 
+document.getElementById('submitBtn').innerText=
+settings.submitButtonText||
+'Submit Visit';
 
-    if (!empId) {
+if(settings.logoUrl){
 
-      status.innerText =
-        'Employee ID bharein.';
+const logo=document.getElementById('companyLogo');
 
-      return;
-    }
+logo.src=settings.logoUrl;
+logo.style.display='block';
 
+}else{
 
-    if (
-      !API_URL ||
-      API_URL.indexOf('PASTE_') === 0
-    ) {
+document.getElementById('companyLogo').style.display='none';
 
-      status.innerText =
-        '❌ Apps Script Web App URL set karein.';
+}
 
-      return;
-    }
+if(settings.backgroundUrl){
 
+document.body.style.backgroundImage=
+"url('"+settings.backgroundUrl+"')";
 
-    status.innerText =
-      'Checking...';
+}
 
+const opacity=
+parseFloat(settings.backgroundOpacity);
 
-    try {
+if(!isNaN(opacity)){
 
-      const result =
-        await apiGet({
-          action: 'verifyEmployee',
-          empId: empId
-        });
+document.body.style.setProperty(
+'--bg-opacity',
+opacity
+);
 
+}
 
-      if (!result.success) {
+document.getElementById('employeeIdLabel').innerText=
+settings.employeeIdHeading||
+'Employee ID';
 
-        status.innerText =
-          '❌ Employee ID nahi mila.';
+document.getElementById('employeeNameHeading').innerText=
+settings.employeeNameHeading||
+'Employee Name:';
 
-        return;
-      }
+document.getElementById('hqHeading').innerText=
+settings.headQuarterHeading||
+'Head Quarter:';
 
+document.getElementById('visitCityLabel').innerText=
+settings.visitCityHeading||
+'To Visit City / District / State';
 
-      employee = result;
+document.getElementById('firmNameLabel').innerText=
+settings.firmNameHeading||
+'Visit Customer Firm Name';
 
+document.getElementById('pinCodeLabel').innerText=
+settings.visitAreaPinHeading||
+'Visit Area Pin Code';
 
-      document
-        .getElementById('loginSection')
-        .style.display =
-        'none';
+document.getElementById('customerNameLabel').innerText=
+settings.customerNameHeading||
+'Visit Customer Name';
 
+document.getElementById('photoLabel').innerText=
+settings.photoHeading||
+'Visited Customer Photo - Live Camera Only';
 
-      document
-        .getElementById('formSection')
-        .style.display =
-        'block';
+document.getElementById('remarksLabel').innerText=
+settings.remarksHeading||
+'Visit Remarks / Discussion Notes';
 
+if(settings.declarationHeading){
 
-      document
-        .getElementById('infoName')
-        .innerText =
-        result.name;
+document.getElementById('declarationLabel').innerText=
+settings.declarationHeading;
 
+}
 
-      document
-        .getElementById('infoEmpId')
-        .innerText =
-        result.empId;
+if(boolValue(settings.showEmail,true)){
 
+document.getElementById('emailRow').style.display='block';
 
-      document
-        .getElementById('infoHQ')
-        .innerText =
-        result.hq;
+}else{
 
+document.getElementById('emailRow').style.display='none';
 
-      document
-        .getElementById('infoEmail')
-        .innerText =
-        result.email || '';
+}
 
+if(boolValue(settings.showHQ,true)){
 
-    } catch (error) {
+document.getElementById('hqRow').style.display='block';
 
-      status.innerText =
-        '❌ Error: ' +
-        error.message;
+}else{
 
-    }
+document.getElementById('hqRow').style.display='none';
 
-  }
+}
 
+if(boolValue(settings.showRemarks,true)){
 
-  /* =====================================================
-     CAMERA
-     ===================================================== */
+document.getElementById('remarksSection').style.display='block';
 
-  async function startCamera() {
+}else{
 
-    const video =
-      document
-        .getElementById('cameraVideo');
+document.getElementById('remarksSection').style.display='none';
 
-    const gpsStatus =
-      document
-        .getElementById('gpsStatus');
+}
 
+if(!boolValue(settings.liveCameraRequired,true)&&
+!boolValue(settings.photoRequired,true)){
 
-    if (
-      !navigator.mediaDevices ||
-      !navigator.mediaDevices.getUserMedia
-    ) {
+document.getElementById('cameraSection').style.display='none';
 
-      gpsStatus.innerText =
-        '❌ Camera API available nahi hai.\n' +
-        'Page ko HTTPS Chrome me directly open karein.';
+}
 
-      return;
-    }
+if(!boolValue(settings.declarationRequired,true)){
 
+document.getElementById('declarationSection').style.display='none';
 
-    try {
+}
 
-      cameraStream =
-        await navigator
-          .mediaDevices
-          .getUserMedia({
+}
 
-            video: {
+async function login(){
 
-              facingMode: {
-                ideal: 'environment'
-              },
+const empId=
+document.getElementById('loginEmployee').value.trim();
 
-              width: {
-                ideal: 1280
-              },
+const status=
+document.getElementById('loginStatus');
 
-              height: {
-                ideal: 720
-              }
+if(!empId){
 
-            },
+status.innerText='Employee ID bharein.';
 
-            audio: false
+return;
 
-          });
+}
 
+status.innerText='Checking...';
 
-      video.srcObject =
-        cameraStream;
+try{
 
+const result=await apiGet({
+action:'verifyEmployee',
+empId:empId
+});
 
-      video.style.display =
-        'block';
+if(!result.success){
 
+status.innerText='❌ Employee ID nahi mila.';
 
-      document
-        .getElementById('startCameraBtn')
-        .style.display =
-        'none';
+return;
 
+}
 
-      document
-        .getElementById('captureBtn')
-        .style.display =
-        'block';
+employee=result;
 
+document.getElementById('loginSection').style.display='none';
+document.getElementById('formSection').classList.remove('hidden');
 
-      document
-        .getElementById('stopCameraBtn')
-        .style.display =
-        'block';
+document.getElementById('infoName').innerText=
+result.name||'';
 
+document.getElementById('infoEmpId').innerText=
+result.empId||'';
 
-      gpsStatus.innerText =
-        '📍 Camera ready.\nGPS प्राप्त हो रहा है...';
+document.getElementById('infoHQ').innerText=
+result.hq||'';
 
+document.getElementById('infoEmail').innerText=
+result.email||'';
 
-      getGPS();
+if(boolValue(settings.gpsRequired,true)){
 
+document.getElementById('gpsStatus').innerText=
+'📍 GPS: Camera start karne par location li jayegi.';
 
-    } catch (error) {
+}
 
-      gpsStatus.innerText =
-        '❌ Camera access error: ' +
-        error.message +
-        '\n\nChrome में इस page को सीधे खोलें और Camera = Allow करें.';
+}catch(error){
 
-    }
+status.innerText='❌ Error: '+error.message;
 
-  }
+}
 
+}
 
-  /* =====================================================
-     GPS
-     ===================================================== */
+async function startCamera(){
 
-  function getGPS() {
+if(!boolValue(settings.liveCameraRequired,true)&&
+!boolValue(settings.photoRequired,true)){
 
-    if (!navigator.geolocation) {
+return;
 
-      document
-        .getElementById('gpsStatus')
-        .innerText =
-        '❌ GPS available nahi hai.';
+}
 
-      return;
-    }
+const video=document.getElementById('cameraVideo');
+const gpsStatus=document.getElementById('gpsStatus');
 
+if(!navigator.mediaDevices||
+!navigator.mediaDevices.getUserMedia){
 
-    navigator
-      .geolocation
-      .getCurrentPosition(
+gpsStatus.innerText=
+'❌ Camera API available nahi hai. HTTPS Chrome use karein.';
 
-        function(position) {
+return;
 
-          latitude =
-            position.coords.latitude;
+}
 
-          longitude =
-            position.coords.longitude;
+try{
 
-          accuracy =
-            position.coords.accuracy;
+cameraStream=
+await navigator.mediaDevices.getUserMedia({
 
+video:{
+facingMode:{ideal:'environment'},
+width:{ideal:1280},
+height:{ideal:720}
+},
 
-          document
-            .getElementById('gpsStatus')
-            .innerText =
+audio:false
 
-            '📍 GPS Ready\n' +
-            'Lat: ' +
-            latitude.toFixed(6) +
-            '\nLng: ' +
-            longitude.toFixed(6) +
-            '\nAccuracy: ' +
-            Math.round(accuracy) +
-            ' meters';
+});
 
+video.srcObject=cameraStream;
+video.style.display='block';
 
-          getAddress();
+document.getElementById('startCameraBtn').style.display='none';
+document.getElementById('captureBtn').style.display='block';
+document.getElementById('stopCameraBtn').style.display='block';
 
-        },
+gpsStatus.innerText=
+'📍 Camera ready.\nGPS प्राप्त हो रहा है...';
 
+if(boolValue(settings.gpsRequired,true)){
 
-        function(error) {
+getGPS();
 
-          document
-            .getElementById('gpsStatus')
-            .innerText =
-            '❌ GPS error: ' +
-            error.message;
+}
 
-        },
+}catch(error){
 
+gpsStatus.innerText=
+'❌ Camera access error: '+error.message+
+'\n\nChrome में Camera = Allow करें.';
 
-        {
+}
 
-          enableHighAccuracy: true,
+}
 
-          maximumAge: 0,
+function getGPS(){
 
-          timeout: 15000
+if(!navigator.geolocation){
 
-        }
+document.getElementById('gpsStatus').innerText=
+'❌ GPS available nahi hai.';
 
-      );
+return;
 
-  }
+}
 
+navigator.geolocation.getCurrentPosition(
 
-  /* =====================================================
-     ADDRESS
-     ===================================================== */
+function(position){
 
-  async function getAddress() {
+latitude=position.coords.latitude;
+longitude=position.coords.longitude;
+accuracy=position.coords.accuracy;
 
-    if (
-      latitude === null ||
-      longitude === null
-    ) {
-      return;
-    }
+document.getElementById('gpsStatus').innerText=
+'📍 GPS Ready\nLat: '+latitude.toFixed(6)+
+'\nLng: '+longitude.toFixed(6)+
+'\nAccuracy: '+Math.round(accuracy)+' meters';
 
+getAddress();
 
-    const url =
-      'https://nominatim.openstreetmap.org/reverse' +
-      '?format=json' +
-      '&lat=' +
-      latitude +
-      '&lon=' +
-      longitude;
+checkSubmit();
 
+},
 
-    try {
+function(error){
 
-      const response =
-        await fetch(url);
+document.getElementById('gpsStatus').innerText=
+'❌ GPS error: '+error.message;
 
-      const data =
-        await response.json();
+},
 
-      address =
-        data.display_name || '';
+{
+enableHighAccuracy:true,
+maximumAge:0,
+timeout:15000
+}
 
-    } catch (error) {
+);
 
-      address = '';
+}
 
-    }
+async function getAddress(){
 
-  }
+if(latitude===null||longitude===null)return;
 
+const url=
+'https://nominatim.openstreetmap.org/reverse'+
+'?format=json&lat='+latitude+'&lon='+longitude;
 
-  /* =====================================================
-     CAPTURE
-     ===================================================== */
+try{
 
-  function capturePhoto() {
+const response=await fetch(url);
+const data=await response.json();
 
-    if (!cameraStream) {
+address=data.display_name||'';
 
-      alert(
-        'Pehle camera start karein.'
-      );
+}catch(error){
 
-      return;
-    }
+address='';
 
+}
 
-    if (
-      latitude === null ||
-      longitude === null
-    ) {
+}
 
-      alert(
-        'GPS location milne tak wait karein.'
-      );
+function capturePhoto(){
 
-      return;
-    }
+if(!cameraStream){
 
+alert('Pehle camera start karein.');
+return;
 
-    if (
-      accuracy !== null &&
-      accuracy > 100
-    ) {
+}
 
-      alert(
-        'GPS accuracy abhi ' +
-        Math.round(accuracy) +
-        ' meters hai.\n\n' +
-        'Open area me jaakar dobara try karein.'
-      );
+if(boolValue(settings.gpsRequired,true)&&
+(latitude===null||longitude===null)){
 
-      return;
-    }
+alert('GPS location milne tak wait karein.');
+return;
 
+}
 
-    const video =
-      document
-        .getElementById('cameraVideo');
+if(
+accuracy!==null&&
+settings.maxGPSAccuracy&&
+accuracy>Number(settings.maxGPSAccuracy)
+){
 
+alert(
+'GPS accuracy '+Math.round(accuracy)+
+' meters hai.\nOpen area me dobara try karein.'
+);
 
-    const canvas =
-      document
-        .getElementById('canvas');
+return;
 
+}
 
-    if (
-      !video.videoWidth ||
-      !video.videoHeight
-    ) {
+const video=document.getElementById('cameraVideo');
+const canvas=document.getElementById('canvas');
 
-      alert(
-        'Camera frame ready nahi hai.'
-      );
+if(!video.videoWidth||!video.videoHeight){
 
-      return;
-    }
+alert('Camera frame ready nahi hai.');
+return;
 
+}
 
-    canvas.width =
-      video.videoWidth;
+canvas.width=video.videoWidth;
+canvas.height=video.videoHeight;
 
-    canvas.height =
-      video.videoHeight;
+const ctx=canvas.getContext('2d');
 
+ctx.drawImage(
+video,
+0,
+0,
+canvas.width,
+canvas.height
+);
 
-    const ctx =
-      canvas.getContext('2d');
+if(boolValue(settings.watermarkRequired,true)){
 
+addWatermark(ctx,canvas);
 
-    /* LIVE VIDEO FRAME */
+}
 
-    ctx.drawImage(
-      video,
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
+photoBase64=
+canvas.toDataURL('image/jpeg',0.85);
 
+document.getElementById('photoPreview').src=
+photoBase64;
 
-    /* =================================================
-       WATERMARK
-       ================================================= */
+document.getElementById('photoPreview').style.display='block';
 
-    const now =
-      new Date();
+document.getElementById('retakeBtn').style.display='block';
 
+stopCamera();
 
-    const dateTime =
-      now.toLocaleString('en-IN');
+checkSubmit();
 
+}
 
-    const line1 =
-      employee.name +
-      ' | ' +
-      dateTime;
+function addWatermark(ctx,canvas){
 
+const now=new Date();
 
-    const line2 =
-      'Lat: ' +
-      latitude.toFixed(6) +
-      ' | Lng: ' +
-      longitude.toFixed(6);
+const dateTime=now.toLocaleString('en-IN');
 
+const line1=
+(employee.name||'')+' | '+dateTime;
 
-    const line3 =
-      'GPS Accuracy: ' +
-      Math.round(accuracy) +
-      ' m';
+const line2=
+'Lat: '+latitude.toFixed(6)+
+' | Lng: '+longitude.toFixed(6);
 
+const line3=
+'GPS Accuracy: '+Math.round(accuracy)+' m';
 
-    const fontSize =
-      Math.max(
-        18,
-        Math.floor(
-          canvas.width / 45
-        )
-      );
+const fontSize=
+Math.max(18,Math.floor(canvas.width/45));
 
+const barHeight=fontSize*4;
 
-    const barHeight =
-      fontSize * 4;
+ctx.fillStyle='rgba(0,0,0,.65)';
 
+ctx.fillRect(
+0,
+canvas.height-barHeight,
+canvas.width,
+barHeight
+);
 
-    ctx.fillStyle =
-      'rgba(0,0,0,0.65)';
+ctx.fillStyle='#fff';
+ctx.font=fontSize+'px Arial';
 
+ctx.fillText(
+line1,
+12,
+canvas.height-barHeight+fontSize
+);
 
-    ctx.fillRect(
-      0,
-      canvas.height - barHeight,
-      canvas.width,
-      barHeight
-    );
+ctx.fillText(
+line2,
+12,
+canvas.height-barHeight+fontSize*2
+);
 
+ctx.fillText(
+line3,
+12,
+canvas.height-barHeight+fontSize*3
+);
 
-    ctx.fillStyle =
-      '#ffffff';
+}
 
+function stopCamera(){
 
-    ctx.font =
-      fontSize +
-      'px Arial';
+if(cameraStream){
 
+cameraStream.getTracks().forEach(
+track=>track.stop()
+);
 
-    ctx.fillText(
-      line1,
-      12,
-      canvas.height -
-        barHeight +
-        fontSize
-    );
+cameraStream=null;
 
+}
 
-    ctx.fillText(
-      line2,
-      12,
-      canvas.height -
-        barHeight +
-        fontSize * 2
-    );
+document.getElementById('cameraVideo').style.display='none';
+document.getElementById('captureBtn').style.display='none';
+document.getElementById('stopCameraBtn').style.display='none';
 
+if(!photoBase64){
 
-    ctx.fillText(
-      line3,
-      12,
-      canvas.height -
-        barHeight +
-        fontSize * 3
-    );
+document.getElementById('startCameraBtn').style.display='block';
 
+}
 
-    /* JPEG */
+}
 
-    photoBase64 =
-      canvas.toDataURL(
-        'image/jpeg',
-        0.85
-      );
+function retakePhoto(){
 
+photoBase64=null;
 
-    document
-      .getElementById('photoPreview')
-      .src =
-      photoBase64;
+document.getElementById('photoPreview').style.display='none';
+document.getElementById('retakeBtn').style.display='none';
+document.getElementById('startCameraBtn').style.display='block';
 
+checkSubmit();
 
-    document
-      .getElementById('photoPreview')
-      .style.display =
-      'block';
+startCamera();
 
+}
 
-    document
-      .getElementById('retakeBtn')
-      .style.display =
-      'block';
+function checkSubmit(){
 
+const gpsRequired=
+boolValue(settings.gpsRequired,true);
 
-    stopCamera();
+const photoRequired=
+boolValue(settings.photoRequired,true);
 
+const declarationRequired=
+boolValue(settings.declarationRequired,true);
 
-    checkSubmit();
+const declaration=
+document.getElementById('declaration').checked;
 
-  }
+let ok=true;
 
+if(gpsRequired&&
+(latitude===null||longitude===null))
+ok=false;
 
-  /* =====================================================
-     STOP CAMERA
-     ===================================================== */
+if(photoRequired&&!photoBase64)
+ok=false;
 
-  function stopCamera() {
+if(declarationRequired&&!declaration)
+ok=false;
 
-    if (cameraStream) {
+document.getElementById('submitBtn').disabled=!ok;
 
-      cameraStream
-        .getTracks()
-        .forEach(function(track) {
+}
 
-          track.stop();
+async function submitVisit(){
 
-        });
+const status=document.getElementById('status');
+const btn=document.getElementById('submitBtn');
 
+const visitCity=
+document.getElementById('visitCity').value.trim();
 
-      cameraStream = null;
+const firmName=
+document.getElementById('firmName').value.trim();
 
-    }
+const customerName=
+document.getElementById('customerName').value.trim();
 
+const pinCode=
+document.getElementById('pinCode').value.trim();
 
-    document
-      .getElementById('cameraVideo')
-      .style.display =
-      'none';
+const remarks=
+document.getElementById('remarks').value.trim();
 
+if(!visitCity||
+!firmName||
+!customerName||
+!pinCode){
 
-    document
-      .getElementById('captureBtn')
-      .style.display =
-      'none';
+status.innerText='❌ Saari required fields bharein.';
+return;
 
+}
 
-    document
-      .getElementById('stopCameraBtn')
-      .style.display =
-      'none';
+if(boolValue(settings.photoRequired,true)&&!photoBase64){
 
+status.innerText='❌ Live photo capture karein.';
+return;
 
-    if (!photoBase64) {
+}
 
-      document
-        .getElementById('startCameraBtn')
-        .style.display =
-        'block';
+if(boolValue(settings.gpsRequired,true)&&
+(latitude===null||longitude===null)){
 
-    }
+status.innerText='❌ GPS required.';
+return;
 
-  }
+}
 
+if(boolValue(settings.remarksRequired,false)&&!remarks){
 
-  /* =====================================================
-     RETAKE
-     ===================================================== */
+status.innerText='❌ Remarks required.';
+return;
 
-  function retakePhoto() {
+}
 
-    photoBase64 = null;
+if(boolValue(settings.declarationRequired,true)&&
+!document.getElementById('declaration').checked){
 
+status.innerText='❌ Declaration accept karein.';
+return;
 
-    document
-      .getElementById('photoPreview')
-      .style.display =
-      'none';
+}
 
+btn.disabled=true;
+status.innerText='Saving...';
 
-    document
-      .getElementById('retakeBtn')
-      .style.display =
-      'none';
+try{
 
+const response=await fetch(
+API_URL,
+{
+method:'POST',
+headers:{
+'Content-Type':'text/plain;charset=utf-8'
+},
+body:JSON.stringify({
 
-    document
-      .getElementById('startCameraBtn')
-      .style.display =
-      'block';
+action:'saveVisit',
 
+empId:employee.empId,
+empName:employee.name,
+hq:employee.hq,
 
-    checkSubmit();
+visitCity:visitCity,
+firmName:firmName,
+pinCode:pinCode,
+contactPerson:customerName,
 
+lat:latitude,
+lng:longitude,
+accuracy:accuracy,
 
-    startCamera();
+geoLocation:
+latitude!==null&&longitude!==null?
+latitude.toFixed(6)+','+longitude.toFixed(6):'',
 
-  }
+address:address,
+remarks:remarks,
+photoBase64:photoBase64
 
+})
+}
+);
 
-  /* =====================================================
-     SUBMIT ENABLE
-     ===================================================== */
+const result=await response.json();
 
-  function checkSubmit() {
+if(result.status==='duplicate'){
 
-    const declaration =
-      document
-        .getElementById('declaration')
-        .checked;
+status.innerText=
+'⚠️ Is customer ki entry aaj pehle se ho chuki hai.';
 
+btn.disabled=false;
+return;
 
-    document
-      .getElementById('submitBtn')
-      .disabled =
+}
 
-      !(
-        photoBase64 &&
-        latitude !== null &&
-        longitude !== null &&
-        declaration
-      );
+if(result.status!=='success'){
 
-  }
+throw new Error(
+result.message||'Save failed'
+);
 
+}
 
-  /* =====================================================
-     SUBMIT
-     ===================================================== */
+status.innerText=
+'✅ Visit entry saved successfully.';
 
-  async function submitVisit() {
+clearForm();
 
-    const status =
-      document
-        .getElementById('status');
+}catch(error){
 
+status.innerText=
+'❌ Error: '+error.message;
 
-    const btn =
-      document
-        .getElementById('submitBtn');
+btn.disabled=false;
 
+}
 
-    const visitCity =
-      document
-        .getElementById('visitCity')
-        .value
-        .trim();
+}
 
+function clearForm(){
 
-    const firmName =
-      document
-        .getElementById('firmName')
-        .value
-        .trim();
+document.getElementById('visitCity').value='';
+document.getElementById('firmName').value='';
+document.getElementById('customerName').value='';
+document.getElementById('pinCode').value='';
+document.getElementById('remarks').value='';
+document.getElementById('declaration').checked=false;
 
+photoBase64=null;
+latitude=null;
+longitude=null;
+accuracy=null;
+address='';
 
-    const customerName =
-      document
-        .getElementById('customerName')
-        .value
-        .trim();
+document.getElementById('photoPreview').style.display='none';
+document.getElementById('retakeBtn').style.display='none';
+document.getElementById('startCameraBtn').style.display='block';
 
+document.getElementById('gpsStatus').innerText=
+'📍 GPS: Waiting...';
 
-    const pinCode =
-      document
-        .getElementById('pinCode')
-        .value
-        .trim();
+checkSubmit();
 
+}
 
-    const remarks =
-      document
-        .getElementById('remarks')
-        .value
-        .trim();
+function logout(){
 
+stopCamera();
 
-    if (
-      !visitCity ||
-      !firmName ||
-      !customerName ||
-      !pinCode
-    ) {
+employee={};
+photoBase64=null;
+latitude=null;
+longitude=null;
+accuracy=null;
+address='';
 
-      status.innerText =
-        '❌ Saari required fields bharein.';
+document.getElementById('formSection').classList.add('hidden');
+document.getElementById('loginSection').style.display='block';
 
-      return;
-    }
+document.getElementById('loginEmployee').value='';
+document.getElementById('loginStatus').innerText='';
 
+}
 
-    if (!photoBase64) {
-
-      status.innerText =
-        '❌ Live photo capture karein.';
-
-      return;
-    }
-
-
-    if (
-      latitude === null ||
-      longitude === null
-    ) {
-
-      status.innerText =
-        '❌ GPS required.';
-
-      return;
-    }
-
-
-    btn.disabled = true;
-
-    status.innerText =
-      'Saving...';
-
-
-    /*
-      IMPORTANT:
-      This version expects the Apps Script backend
-      to provide a POST endpoint.
-
-      The final backend will validate the employee,
-      GPS, duplicate visit and save the photo.
-    */
-
-    try {
-
-      const response =
-        await fetch(
-          API_URL,
-          {
-            method: 'POST',
-
-            headers: {
-              'Content-Type':
-                'text/plain;charset=utf-8'
-            },
-
-            body: JSON.stringify({
-
-              action: 'saveVisit',
-
-              empId:
-                employee.empId,
-
-              empName:
-                employee.name,
-
-              hq:
-                employee.hq,
-
-              visitCity:
-                visitCity,
-
-              firmName:
-                firmName,
-
-              pinCode:
-                pinCode,
-
-              contactPerson:
-                customerName,
-
-              lat:
-                latitude,
-
-              lng:
-                longitude,
-
-              accuracy:
-                accuracy,
-
-              geoLocation:
-                latitude.toFixed(6) +
-                ',' +
-                longitude.toFixed(6),
-
-              address:
-                address,
-
-              remarks:
-                remarks,
-
-              photoBase64:
-                photoBase64
-
-            })
-
-          }
-        );
-
-
-      const result =
-        await response.json();
-
-
-      if (
-        result.status ===
-        'duplicate'
-      ) {
-
-        status.innerText =
-          '⚠️ Is customer ki entry aaj pehle se ho chuki hai.';
-
-        btn.disabled = false;
-
-        return;
-      }
-
-
-      if (
-        result.status !==
-        'success'
-      ) {
-
-        throw new Error(
-          result.message ||
-          'Save failed'
-        );
-
-      }
-
-
-      status.innerText =
-        '✅ Visit entry saved successfully.';
-
-
-      clearForm();
-
-
-    } catch (error) {
-
-      status.innerText =
-        '❌ Error: ' +
-        error.message;
-
-      btn.disabled = false;
-
-    }
-
-  }
-
-
-  /* =====================================================
-     CLEAR FORM
-     ===================================================== */
-
-  function clearForm() {
-
-    document
-      .getElementById('visitCity')
-      .value = '';
-
-
-    document
-      .getElementById('firmName')
-      .value = '';
-
-
-    document
-      .getElementById('customerName')
-      .value = '';
-
-
-    document
-      .getElementById('pinCode')
-      .value = '';
-
-
-    document
-      .getElementById('remarks')
-      .value = '';
-
-
-    document
-      .getElementById('declaration')
-      .checked = false;
-
-
-    photoBase64 = null;
-
-    latitude = null;
-
-    longitude = null;
-
-    accuracy = null;
-
-    address = '';
-
-
-    document
-      .getElementById('photoPreview')
-      .style.display =
-      'none';
-
-
-    document
-      .getElementById('retakeBtn')
-      .style.display =
-      'none';
-
-
-    document
-      .getElementById('startCameraBtn')
-      .style.display =
-      'block';
-
-
-    document
-      .getElementById('gpsStatus')
-      .innerText =
-      '📍 GPS: Waiting...';
-
-
-    checkSubmit();
-
-  }
-
-
-  /* =====================================================
-     LOGOUT
-     ===================================================== */
-
-  function logout() {
-
-    stopCamera();
-
-
-    employee = {};
-
-    photoBase64 = null;
-
-    latitude = null;
-
-    longitude = null;
-
-    accuracy = null;
-
-    address = '';
-
-
-    document
-      .getElementById('formSection')
-      .style.display =
-      'none';
-
-
-    document
-      .getElementById('loginSection')
-      .style.display =
-      'block';
-
-
-    document
-      .getElementById('loginEmployee')
-      .value =
-      '';
-
-
-    document
-      .getElementById('loginStatus')
-      .innerText =
-      '';
-
-  }
+window.addEventListener(
+'load',
+function(){
+loadSettings();
+}
+);
 
 </script>
 
 </body>
-</html>1
+</html>
